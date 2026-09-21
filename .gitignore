@@ -16,6 +16,8 @@ storage.json
 *.png
 *.jpg
 *.webm
+# ...except the repo's own docs assets
+!docs/assets/*.png
 
 # Backups
 .pre-env-backup/
