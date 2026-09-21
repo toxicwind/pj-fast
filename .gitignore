@@ -1,0 +1,19 @@
+# secrets — never commit, at any level of this repo
+.env
+.env.local
+*.pem
+*.key
+
+# dependencies
+node_modules/
+
+# binaries / big blobs don't belong in the repo
+*.zip
+*.tar.gz
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*~
+.vscode/
+.idea/
