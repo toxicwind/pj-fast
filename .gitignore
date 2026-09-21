@@ -1,19 +1,33 @@
-# secrets — never commit, at any level of this repo
+# Secrets / local config — never commit
 .env
 .env.local
-*.pem
-*.key
+.env.*.local
 
-# dependencies
+# Dependencies
 node_modules/
 
-# binaries / big blobs don't belong in the repo
+# Run outputs (written under PJ_BASE_DIR, but keep local copies out too)
+out*/
+*.log
+storage.json
+*storage*.json
+
+# Browser artifacts
+*.png
+*.jpg
+*.webm
+
+# Backups
+.pre-env-backup/
+
+# Binaries / big blobs
 *.zip
 *.tar.gz
 
-# OS / editor noise
+# OS / editor
 .DS_Store
 Thumbs.db
+*.swp
 *~
 .vscode/
 .idea/
