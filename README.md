@@ -43,8 +43,20 @@ call `cart.*` procedures directly from page context.
 ```bash
 cp .env.example .env   # fill in your ZIP / store / paths
 npm install
-node yote-stage38.js   # rebuild the verified $27.11 BOGO cart
+node pj.js bogo        # rebuild the verified $27.11 BOGO cart
+node pj.js --help      # all commands
 ```
+
+| Command | What it does |
+|---|---|
+| `node pj.js bogo` | Build the verified **$27.11** BOGO cart (Philly + pepperoni) |
+| `node pj.js eds8l` | Build the verified **$18.43** EDS8L cart |
+| `node pj.js pairings` | Build the verified **$22.75** Pairings cart |
+| `node pj.js promos [CODES...]` | Validate promo codes for this store |
+| `node pj.js cart` | Show current cart + totals |
+| `node pj.js clear` | Empty the cart |
+| `node pj.js menu` | Dump store menu categories + products |
+| `node pj.js setup` | (Re)run store setup, save session |
 
 > [!TIP]
 > `.env` is gitignored — machine-specific values (`PJ_BASE_DIR`,
@@ -146,7 +158,12 @@ pj-fast/
 ├── [config.js](config.js)                    env → CFG / window.__PJCFG
 ├── [.env.example](.env.example)              safe template (never commit .env)
 ├── [package.json](package.json)              playwright-core + dotenv
-├── stage1.js · yote-stage1.js … yote-stage49.js   the 50 recon stages
+├── [pj.js](pj.js)                        CLI: bogo · eds8l · pairings · promos · cart · clear · menu · setup
+├── [lib/](lib/session.js)
+│   ├── [session.js](lib/session.js)      Chromium session, __PJ helpers, store setup
+│   ├── [cart.js](lib/cart.js)            cart ops via window.__PJ (empty/add/validate/menu)
+│   └── [deals.js](lib/deals.js)          verified product/deal payload builders
+├── [archive/stages/](archive/stages/)    the 50 recon stages (frozen history)
 └── [docs/](docs/stages.md)
     ├── [architecture.md](docs/architecture.md)   tRPC surface, payload shapes, diagrams
     ├── [deals.md](docs/deals.md)                 verified routes + promo catalog

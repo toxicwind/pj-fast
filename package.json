@@ -1,16 +1,1 @@
-{
-  "name": "pj-fast",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "playwright": "^1.63.0",
-    "dotenv": "^17.2.0"
-  }
-}
+{"bin":{"pj":"./pj.js"},"dependencies":{"dotenv":"^17.2.0","playwright-core":"^1.63.0"},"description":"Papa John's carryout cart toolkit — verified deal routes via tRPC (cart building only, no ordering)","keywords":["papa-johns","playwright","trpc","deal-hunting"],"license":"MIT","main":"pj.js","name":"pj-fast","scripts":{"bogo":"node pj.js bogo","cart":"node pj.js cart","clear":"node pj.js clear","eds8l":"node pj.js eds8l","menu":"node pj.js menu","pairings":"node pj.js pairings","promos":"node pj.js promos","setup":"node pj.js setup"},"version":"2.0.0"}
