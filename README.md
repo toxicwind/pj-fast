@@ -1,12 +1,14 @@
-![pj-fast — pizza, lightning-fast](docs/assets/banner.png)
-
 # 🍕 pj-fast — Papa John's carryout optimization
 
-![node >= 18](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)
-![playwright-core](https://img.shields.io/badge/playwright--core-2EAD33?logo=playwright&logoColor=white)
-![tRPC](https://img.shields.io/badge/tRPC-API-398CCB?logo=trpc&logoColor=white)
-![recon complete](https://img.shields.io/badge/recon-complete-blue)
-[![license: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+<div align="right">
+
+![node >= 18](https://img.shields.io/badge/node-%3E%3D18-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![playwright-core](https://img.shields.io/badge/playwright--core-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![tRPC](https://img.shields.io/badge/tRPC-API-398CCB?style=for-the-badge&logo=trpc&logoColor=white)
+![recon complete](https://img.shields.io/badge/recon-complete-blue?style=for-the-badge)
+[![license: MIT](https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge)](LICENSE)
+
+</div>
 
 > [!CAUTION]
 > Recon tooling only. These scripts build and price carts — they never submit
@@ -14,53 +16,24 @@
 > this repo's history died at checkout; see
 > [the failure log](docs/failure-log-2026-09-20.md).
 
-## Contents
+## Why should you care?
 
-- [What is this?](#what-is-this)
-- [Quickstart](#quickstart)
-- [How it works](#how-it-works)
-- [Verified routes](#verified-routes)
-- [Promo & deal catalog](#promo--deal-catalog)
-- [Configuration](#configuration)
-- [Repo map](#repo-map)
-- [Docs](#docs)
-- [Roadmap](#roadmap)
-- [Anti-bot notes](#anti-bot-notes)
-- [Backup context](#backup-context)
-- [License](#license)
+50 Playwright scripts reverse-engineered Papa John's ordering site down to its
+[tRPC API](https://www.papajohns.com/api/trpc/) and found the cheapest verified
+carryout carts under $30 for two hungry adults — including a **$27.11** BOGO
+Philly Cheesesteak build. No browser UI automation for the cart itself: real
+Chromium executes the site's own JavaScript, and the scripts call `cart.*`
+procedures directly from page context.
 
-## What is this?
+**License:** [MIT](LICENSE) · **Security:** recon-only by design — nothing here can place an order
 
-50 Playwright scripts that reverse-engineered Papa John's ordering site down
-to its [tRPC API](https://www.papajohns.com/api/trpc/) and found the cheapest
-verified carryout carts under $30 for two hungry adults — including a
-**$27.11** BOGO Philly Cheesesteak build. No browser UI automation for the
-cart itself: real Chromium executes the site's own JavaScript, and the scripts
-call `cart.*` procedures directly from page context.
+## Features
 
-## Quickstart
-
-```bash
-cp .env.example .env   # fill in your ZIP / store / paths
-npm install
-node pj.js bogo        # rebuild the verified $27.11 BOGO cart
-node pj.js --help      # all commands
-```
-
-| Command | What it does |
-|---|---|
-| `node pj.js bogo` | Build the verified **$27.11** BOGO cart (Philly + pepperoni) |
-| `node pj.js eds8l` | Build the verified **$18.43** EDS8L cart |
-| `node pj.js pairings` | Build the verified **$22.75** Pairings cart |
-| `node pj.js promos [CODES...]` | Validate promo codes for this store |
-| `node pj.js cart` | Show current cart + totals |
-| `node pj.js clear` | Empty the cart |
-| `node pj.js menu` | Dump store menu categories + products |
-| `node pj.js setup` | (Re)run store setup, save session |
-
-> [!TIP]
-> `.env` is gitignored — machine-specific values (`PJ_BASE_DIR`,
-> `PJ_CHROMIUM_PATH`) differ per box, so set them per machine.
+- **Verified cheap carts** — three routes validated live 2026-09-20 at store 1054, Denver: $27.11 BOGO Philly, $18.43 EDS8L Philly, $22.75 Pairings
+- **Direct tRPC calls** — stages 30–49 skip the UI and call `/api/trpc/cart.*` from `page.evaluate` after stages 1–29 mapped the XHR surface
+- **Promo code validation sweep** — accepted vs rejected codes with per-code effects (`BOGO4U`, `SM25`, `PEPSI20`, …)
+- **Frozen recon history** — all 50 stages preserved in `archive/stages/` with per-stage header comments
+- **Per-machine config** — `.env` → `config.js` → `window.__PJCFG` injection, gitignored by default
 
 ## How it works
 
@@ -75,9 +48,30 @@ flowchart LR
 
 Each stage launches Chromium, injects config as `window.__PJCFG` via
 `page.addInitScript`, then drives the site's own tRPC mutations from
-`page.evaluate` — reading XHR traffic first (stages 1–29), then calling the
-API directly (stages 30–49). Full protocol reference:
+`page.evaluate`. Full protocol reference:
 [docs/architecture.md](docs/architecture.md).
+
+## Quick start
+
+```bash
+npm install
+node pj.js bogo        # rebuild the verified $27.11 BOGO cart
+node pj.js --help      # all commands
+```
+
+(`cp .env.example .env` first — machine-specific values like `PJ_BASE_DIR` and
+`PJ_CHROMIUM_PATH` differ per box. `.env` is gitignored.)
+
+| Command | What it does |
+|---|---|
+| `node pj.js bogo` | Build the verified **$27.11** BOGO cart (Philly + pepperoni) |
+| `node pj.js eds8l` | Build the verified **$18.43** EDS8L cart |
+| `node pj.js pairings` | Build the verified **$22.75** Pairings cart |
+| `node pj.js promos [CODES...]` | Validate promo codes for this store |
+| `node pj.js cart` | Show current cart + totals |
+| `node pj.js clear` | Empty the cart |
+| `node pj.js menu` | Dump store menu categories + products |
+| `node pj.js setup` | (Re)run store setup, save session |
 
 ## Verified routes
 
@@ -89,10 +83,8 @@ Store 1054, Denver — validated live 2026-09-20.[^1]
 | 2 — EDS8L ✅ | `47851` / `EDS8L` | Large Philly (no onion + jalapeño) | **$18.43** |
 | 3 — Pairings ✅ | `65515` / `EDMWP7` | 3× Medium Pepperoni @ $6.99 | **$22.75** |
 
-$\text{savings} = \text{regular} - \text{subtotal}$ — route 3 banks the most
-absolute savings ($31.50 off $52.47); route 1 is the best Philly-per-dollar.
-
-## Promo & deal catalog
+Route 3 banks the most absolute savings ($31.50 off $52.47); route 1 is the best
+Philly-per-dollar.
 
 <details>
 <summary><strong>Validated promo codes</strong> (click to expand)</summary>
@@ -111,75 +103,39 @@ Rejected: `LOC40`, `FREEDELIVERY`, `AE23`, `PSI20`, `PAPATRACK`, `PEPSI25`,
 
 Full tables with subtotals, tax, and savings: [docs/deals.md](docs/deals.md).
 
+## Architecture
+
+```
+pj-fast/
+├── README.md                    ← you are here
+├── LICENSE                      MIT
+├── config.js                    env → CFG / window.__PJCFG
+├── .env.example                 safe template (never commit .env)
+├── package.json                 playwright-core + dotenv
+├── pj.js                        CLI: bogo · eds8l · pairings · promos · cart · clear · menu · setup
+├── lib/
+│   ├── session.js               Chromium session, __PJ helpers, store setup
+│   ├── cart.js                  cart ops via window.__PJ (empty/add/validate/menu)
+│   └── deals.js                 verified product/deal payload builders
+├── archive/stages/              the 50 recon stages (frozen history)
+└── docs/
+    ├── architecture.md          tRPC surface, payload shapes, sequence diagram
+    ├── deals.md                 verified routes + promo catalog
+    ├── stages.md                all 50 stages, grouped by phase
+    └── failure-log-2026-09-20.md  the real order attempt that died at checkout
+```
+
 ## Configuration
 
 All tunables live in `.env`, exposed through [`config.js`](config.js):
 
 - **Node side:** `const CFG = require('./config')` → `CFG.STORE_ID`, `CFG.DEAL_BOGO`, …
-- **In `page.evaluate`:** config arrives as `P` — e.g. `dealId: P.DEAL_BOGO`, `promoCode: P.PROMO_BOGO4U`.
-- **Paths:** `CFG.outDir('out48')` / `CFG.storage('out48/storage.json')` resolve under `PJ_BASE_DIR`.
+- **In `page.evaluate`:** config arrives as `P` — e.g. `dealId: P.DEAL_BOGO`, `promoCode: P.PROMO_BOGO4U`
+- **Paths:** `CFG.outDir('out48')` / `CFG.storage('out48/storage.json')` resolve under `PJ_BASE_DIR`
 
-<details>
-<summary><strong>Full key reference</strong> (click to expand)</summary>
-
-| Key | Default | What |
-|---|---|---|
-| `SITE_URL` | `https://www.papajohns.com` | Site base |
-| `STORE_ID` | `1054` | Validated store |
-| `ZIP` | `80234` | Search ZIP |
-| `BASE_DIR` | `/home/toxic/pj` | Artifact root |
-| `CHROMIUM_PATH` | `/usr/bin/chromium` | Browser binary |
-| `USER_AGENT` | Chrome/126 Win64 | Request UA |
-| `VIEWPORT_W` / `VIEWPORT_H` | `1366` / `900` | Viewport |
-| `LOCALE` / `TIMEZONE` | `en-US` / `America/Denver` | Browser locale |
-| `SKU_PHILLY_LARGE` | `1-1-4-198` | Large Philly SKU |
-| `SKU_PEPP_LARGE` | `1-1-4-115` | Large pepperoni SKU |
-| `SKU_PEPP_MEDIUM` | `1-1-3-115` | Medium pepperoni SKU |
-| `SKU_WINGS_6PC` | `9-390-8-223` | 6pc wings SKU |
-| `SKU_GARLIC_KNOTS` | `12-519-10-202` | Garlic knots SKU |
-| `TOPPINGS_PHILLY` | `47,54,506,29` | Philly: onion(25) out, jalapeño(29) in |
-| `TOPPINGS_PEPPERONI` | `35` | Pepperoni topping id |
-| `SAUCE_PHILLY` / `SAUCE_PEPPERONI` | `428` / `429` | Sauce ids |
-| `CONFIG_PHILLY_LARGE` | `16607` | Philly product config |
-| `CONFIG_PEPP_LARGE` | `29630` | Pepperoni product config |
-| `CONFIG_PAIRING_A/B/C` | `10399/13664/18899` | Pairings slot configs |
-| `CONFIG_KNOTS` | `27247` | Knots config |
-| `DEAL_BOGO` / `DEAL_EDS8L` / `DEAL_PAIRINGS` | `66564/47851/65515` | Deal ids |
-| `PROMO_*` | `BOGO4U`, `SM25`, … | Promo code strings |
-
-</details>
-
-## Repo map
-
-```
-pj-fast/
-├── [README.md](README.md)                  ← you are here
-├── [LICENSE](LICENSE)                        MIT
-├── [config.js](config.js)                    env → CFG / window.__PJCFG
-├── [.env.example](.env.example)              safe template (never commit .env)
-├── [package.json](package.json)              playwright-core + dotenv
-├── [pj.js](pj.js)                        CLI: bogo · eds8l · pairings · promos · cart · clear · menu · setup
-├── [lib/](lib/session.js)
-│   ├── [session.js](lib/session.js)      Chromium session, __PJ helpers, store setup
-│   ├── [cart.js](lib/cart.js)            cart ops via window.__PJ (empty/add/validate/menu)
-│   └── [deals.js](lib/deals.js)          verified product/deal payload builders
-├── [archive/stages/](archive/stages/)    the 50 recon stages (frozen history)
-└── [docs/](docs/stages.md)
-    ├── [architecture.md](docs/architecture.md)   tRPC surface, payload shapes, diagrams
-    ├── [deals.md](docs/deals.md)                 verified routes + promo catalog
-    ├── [stages.md](docs/stages.md)               what each stage does
-    ├── [failure-log-2026-09-20.md](docs/failure-log-2026-09-20.md)  the order that died
-    └── [assets/banner.png](docs/assets/banner.png)
-```
-
-## Docs
-
-| Doc | What's inside |
-|---|---|
-| [architecture.md](docs/architecture.md) | tRPC procedures, `addToCartWithDeal` payload shape, cart-store key, sequence diagram, sharp edges |
-| [deals.md](docs/deals.md) | Route totals with tax/savings math, accepted vs rejected promos |
-| [stages.md](docs/stages.md) | All 50 stages, grouped by phase, from their own header comments |
-| [failure-log-2026-09-20.md](docs/failure-log-2026-09-20.md) | The real order attempt: wrong store, 3 checkout failures, cancellation |
+Key knobs: `SITE_URL`, `STORE_ID` (1054), `ZIP` (80234), `BASE_DIR`, `CHROMIUM_PATH`,
+`USER_AGENT`, `VIEWPORT_W/H`, `LOCALE`, `TIMEZONE`, SKU/deal/promo ids. Full key
+reference: [`config.js`](config.js) and `.env.example`.
 
 ## Roadmap
 
@@ -190,24 +146,18 @@ pj-fast/
 - [ ] Philly + filling sides combined total (direct side-add returns `CONFLICT` — unresolved)
 - [ ] Re-validate for Broomfield store 1055 (all pricing is store 1054)
 
-## Anti-bot notes
-
 > [!WARNING]
 > Plain `curl` gets an Akamai "Technical Difficulties — WD-NS" failover page.
 > `curl_cffi` with Chrome impersonation reaches the real site; real Chromium
 > via `playwright-core` works throughout. Don't bother with raw HTTP.
 
-## Backup context
+## License & security
 
-The recon above fed a real order attempt on 2026-09-20 that died at checkout
-— wrong store staged, three identical site-side "Place order" failures, then
-cancelled by Chris. Full timeline:
+[MIT](LICENSE) © 2026 toxicwind. Recon-only: scripts build and price carts and
+cannot submit checkout. The 2026-09-20 order attempt failed at checkout
+(wrong store staged, three site-side "Place order" failures) — full timeline in
 [docs/failure-log-2026-09-20.md](docs/failure-log-2026-09-20.md). Contact
-details redacted; nothing here can place an order.
-
-## License
-
-[MIT](LICENSE) © 2026 toxicwind.
+details redacted.
 
 [^1]: All pricing was validated for store 1054 (2683 E 120th Ave, Denver),
     not the originally intended Broomfield 1055 — the order died before
