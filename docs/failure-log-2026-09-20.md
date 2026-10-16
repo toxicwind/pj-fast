@@ -1,6 +1,6 @@
 # Papa John's Order Attempt — Backup & Failure Log (2026-09-20)
 
-On Chris's order: **"No order, end and backup all"** / **"Backup all as repo
+On the Architect's order: **"No order, end and backup all"** / **"Backup all as repo
 with readme of failures etc"** / **"Papa specific obv"**.
 
 > GitHub-safe copy: contact details redacted. Nothing in this repo can place,
@@ -12,7 +12,7 @@ with readme of failures etc"** / **"Papa specific obv"**.
   3-cheese blend, philly steak; **onions removed, jalapeño added**.
 - Large Original Crust Pizza — original sauce; pepperoni + bacon.
 - Deal: BUY ONE GET ONE FREE LARGE PIZZA.
-- Carryout, cash at pickup. Contact: Chris O., [redacted],
+- Carryout, cash at pickup. Contact: the Architect O., [redacted],
   [redacted]. Preference ZIP 80234.
 - Intended store: **Broomfield (store 1055)**.
 
@@ -47,13 +47,13 @@ with readme of failures etc"** / **"Papa specific obv"**.
    staged (topping IDs `[47,54,506,29]`); storage snapshot saved. No checkout,
    payment, or submission ever completed by the assistant.
 
-5. **17:58 MDT** — Chris said he paid $10 more and was waiting 16 minutes:
+5. **17:58 MDT** — the Architect said he paid $10 more and was waiting 16 minutes:
    he completed a purchase outside the agent's attempt. Not placed or
    verified by the assistant.
 
 6. **Broomfield retry (store 1055)** — spawned, interrupted before finishing.
 
-7. **19:30 MDT** — Chris cancelled: *"No order, end and backup all."*
+7. **19:30 MDT** — the Architect cancelled: *"No order, end and backup all."*
    Final: no confirmed order, nothing charged, staged carts abandoned.
 
 ## Verified deal routes (store 1054, 2026-09-20)
